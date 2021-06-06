@@ -1,11 +1,12 @@
 ﻿using System;
+using DIO.Filmes;
 
 namespace DIO.Series
 {
     class Program
     {
         static SerieRepositorio repositorio = new SerieRepositorio();
-        static FilmeRepositorio filmerepositorio = new FilmeRepositorio();
+        static FilmeRepositorio filmeRepositorio = new FilmeRepositorio();
         static void Main(string[] args)
         {
             string opcaoUsuario = ObterOpcaoUsuario();
@@ -27,22 +28,22 @@ namespace DIO.Series
                         InserirFilme();
                         break;
                     case "5":
-                        ExcluirSerie();
+                        AtualizarSerie();
                         break;
                     case "6":
-                        ExcluirFilme();
+                        AtualizarFilme();
                         break;
                     case "7":
-                        VisualizarSerie();
+                        ExcluirSerie();
                         break;
                     case "8":
-                        VisualizarFilme();
+                        ExcluirFilme();
                         break;
                     case "9":
-                        ExcluirSerie();
+                        VisualizarSerie();
                         break;
                     case "10":
-                        ExcluirSerie();
+                        VisualizarFilme();
                         break;
                     case "C":
                         Console.Clear();
@@ -69,10 +70,10 @@ namespace DIO.Series
 
         private static void ExcluirFilme()
         {
-            Console.Write("Digite o id da série: ");
-            int indiceSerie = int.Parse(Console.ReadLine());
+            Console.Write("Digite o id do filme: ");
+            int indiceFilme = int.Parse(Console.ReadLine());
 
-            repositorio.Exclui(indiceSerie);
+            filmeRepositorio.Exclui(indiceFilme);
         }
 
         private static void VisualizarSerie()
@@ -86,12 +87,12 @@ namespace DIO.Series
         }
         private static void VisualizarFilme()
         {
-            Console.Write("Digite o id da série: ");
-            int indiceSerie = int.Parse(Console.ReadLine());
+            Console.Write("Digite o id do filme: ");
+            int indiceFilme = int.Parse(Console.ReadLine());
 
-            var serie = repositorio.RetornaPorId(indiceSerie);
+            var filme = filmeRepositorio.RetornaPorId(indiceFilme);
 
-            Console.WriteLine(serie);
+            Console.WriteLine(filme);
         }
 
         private static void AtualizarSerie()
@@ -125,8 +126,8 @@ namespace DIO.Series
         }
         private static void AtualizarFilme()
         {
-            Console.Write("Digite o id da série: ");
-            int indiceSerie = int.Parse(Console.ReadLine());
+            Console.Write("Digite o id do filme: ");
+            int indiceFilme = int.Parse(Console.ReadLine());
 
             foreach (int i in Enum.GetValues(typeof(Genero)))
             {
@@ -135,23 +136,20 @@ namespace DIO.Series
             Console.Write("Digite o gênero entre as opções acima: ");
             int entradaGenero = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite o Título da Série: ");
+            Console.Write("Digite o Título do filme: ");
             string entradaTitulo = Console.ReadLine();
 
-            Console.Write("Digite o Ano de Início da Série: ");
+            Console.Write("Digite o Ano de Laçamento do filme: ");
             int entradaAno = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite a Descrição da Série: ");
-            string entradaDescricao = Console.ReadLine();
-
-            Serie atualizaSerie = new Serie(id: indiceSerie,
+            Filme atualizaFilme = new Filme(id: indiceFilme,
                                         genero: (Genero)entradaGenero,
                                         titulo: entradaTitulo,
-                                        ano: entradaAno,
-                                        descricao: entradaDescricao);
+                                        ano: entradaAno);
 
-            repositorio.Atualiza(indiceSerie, atualizaSerie);
+            filmeRepositorio.Atualiza(indiceFilme, atualizaFilme);
         }
+        
         private static void ListarSeries()
         {
             Console.WriteLine("Listar séries");
@@ -173,21 +171,21 @@ namespace DIO.Series
         }
         private static void ListarFilmes()
         {
-            Console.WriteLine("Listar séries");
+            Console.WriteLine("Listar filmes");
 
-            var lista = repositorio.Lista();
+            var listaFilme = filmeRepositorio.Lista();
 
-            if (lista.Count == 0)
+            if (listaFilme.Count == 0)
             {
-                Console.WriteLine("Nenhuma série cadastrada.");
+                Console.WriteLine("Nenhum filme cadastrado.");
                 return;
             }
 
-            foreach (var serie in lista)
+            foreach (var filme in listaFilme)
             {
-                var excluido = serie.retornaExcluido();
+                var excluido = filme.retornaExcluido();
 
-                Console.WriteLine("#ID {0}: - {1} {2}", serie.retornaId(), serie.retornaTitulo(), (excluido ? "*Excluído*" : ""));
+                Console.WriteLine("#ID {0}: - {1} {2}", filme.retornaId(), filme.retornaTitulo(), (excluido ? "*Excluído*" : ""));
             }
         }
 
@@ -221,7 +219,7 @@ namespace DIO.Series
         }
         private static void InserirFilme()
         {
-            Console.WriteLine("Inserir nova série");
+            Console.WriteLine("Inserir novo filme");
 
             foreach (int i in Enum.GetValues(typeof(Genero)))
             {
@@ -230,22 +228,18 @@ namespace DIO.Series
             Console.Write("Digite o gênero entre as opções acima: ");
             int entradaGenero = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite o Título da Série: ");
+            Console.Write("Digite o Título do Filme: ");
             string entradaTitulo = Console.ReadLine();
 
-            Console.Write("Digite o Ano de Início da Série: ");
+            Console.Write("Digite o Ano de Lançamento do filme: ");
             int entradaAno = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite a Descrição da Série: ");
-            string entradaDescricao = Console.ReadLine();
-
-            Serie novaSerie = new Serie(id: repositorio.ProximoId(),
+            Filme novoFilme = new Filme(id: repositorio.ProximoId(),
                                         genero: (Genero)entradaGenero,
                                         titulo: entradaTitulo,
-                                        ano: entradaAno,
-                                        descricao: entradaDescricao);
+                                        ano: entradaAno);
 
-            repositorio.Insere(novaSerie);
+            filmeRepositorio.Insere(novoFilme);
         }
 
         private static string ObterOpcaoUsuario()
@@ -256,13 +250,23 @@ namespace DIO.Series
 
             Console.WriteLine("1- Listar séries");
 
-            Console.WriteLine("2- Inserir nova série");
+            Console.WriteLine("2- Listar filmes");
 
-            Console.WriteLine("3- Atualizar série");
+            Console.WriteLine("3- Inserir nova série");
 
-            Console.WriteLine("4- Excluir série");
+            Console.WriteLine("4- Inserir novo filme");
 
-            Console.WriteLine("5- Visualizar série");
+            Console.WriteLine("5- Atualizar série");
+
+            Console.WriteLine("6- Atualizar filme");
+
+            Console.WriteLine("7- Excluir série");
+
+            Console.WriteLine("8- Excluir filme");
+
+            Console.WriteLine("9- Visualizar série");
+
+            Console.WriteLine("10- Visualizar filme");
 
             Console.WriteLine("C- Limpar Tela");
             Console.WriteLine("X- Sair");
